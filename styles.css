@@ -1,0 +1,144 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: url('/images/background.png') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+}
+
+/* Header Styling */
+.header-box {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 15px;
+    margin: 20px;
+    border: 5px solid rgba(0, 0, 0, 0.8);
+}
+
+.header-logo {
+    font-size: 2em;
+    font-weight: bold;
+    color: red;
+    cursor: pointer;
+}
+
+.header-nav .nav-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.header-nav .nav-item {
+    margin: 0 15px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.header-nav .nav-item:hover {
+    color: red;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.header-user-info {
+    display: flex;
+    align-items: center;
+}
+
+.username {
+    margin-right: 10px;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-button {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: white;
+    color: black;
+    list-style-type: none;
+    margin: 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 1000;
+}
+
+.dropdown-item {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+
+
+
+
+
+/* Home Page Styling */
+
+.home-page {
+    display: flex;
+    align-items: flex-start;
+    margin: 20px;
+    padding: 10px;
+}
+
+.home-page .left-wrapper {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.home-page .left-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    margin-right: 10px;
+    padding-inline: 20px;
+    padding-bottom: 20px;
+}
+
+.home-page .right-wrapper {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.home-page .right-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding-inline: 20px;
+    padding-bottom: 20px;
+}
+
+.heading-wrapper {
+    text-align: center;
+    color: red;
+    font-size: 1.3em;
+    font-weight: bold;
+}

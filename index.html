@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media Forum</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <header class="header-box">
+            <div class="header-logo" @click="showPage('home')">Page Name</div>
+            <nav class="header-nav">
+                <ul class="nav-list">
+                    <li class="nav-item" @click.prevent="showPage('browse')">Browse Media</li>
+                    <li class="nav-item" @click.prevent="showPage('social')">Social</li>
+                    <li class="nav-item" @click.prevent="showPage('forum')">Forum</li>
+                </ul>
+            </nav>
+            <div class="header-user-info">
+                <span class="username">{{ username }}</span>
+                <div class="dropdown">
+                    <button class="dropdown-button" @click="toggleDropdown">▼</button>
+                    <ul class="dropdown-menu" v-if="dropdownOpen">
+                        <li class="dropdown-item" @click.prevent="showPage('authentication')">Authentication</li>
+                        <li class="dropdown-item" @click.prevent="showPage('settings')">Settings</li>
+                    </ul>
+                </div>
+            </div>
+        </header>
+
+        <!-- Home Page Content -->
+        <div v-if="currentPage === 'home'" class="home-page">
+            <div class="left-wrapper">
+                <div class="left-container">
+                    <div class="heading-wrapper">
+                        <p>Home</p>
+                    </div>
+                </div>
+            </div>
+            <div class="right-wrapper">
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Community</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="vue-app.js"></script>
+</body>
+
+</html>
