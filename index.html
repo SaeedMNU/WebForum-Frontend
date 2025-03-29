@@ -49,6 +49,104 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- Browse Media Page Content -->
+        <div v-if="currentPage === 'browse'" class="browse-page">
+            <div class="left-wrapper">
+                <div class="left-container">
+                    <div class="heading-wrapper">
+                        <p>Browse Media</p>
+                    </div>
+                    <input type="text" v-model="searchQuery" @input="searchMedia" placeholder="Search for media..."
+                        class="search-bar">
+                </div>
+                <div v-if="searchQuery.trim().length > 0 && visibleResults.length > 0" class="search-results-container">
+                    <div v-for="(result, index) in visibleResults" :key="result.media_id" class="search-result-box">
+                        <img @click.prevent="viewMediaInfo(result._id)" :src="result.main_picture" alt="Poster"
+                            class="result-poster">
+                        <div class="result-details">
+                            <a @click.prevent="viewMediaInfo(result._id)" class="result-title">{{ result.title }}</a>
+                            <p class="result-type">
+                                {{ result.type }} -
+                                {{ result.premiered_season }}
+                                {{ extractYear(result.aired_from) }}
+                                {{ extractYear(result.published_from) }}
+                            </p>
+                            <p class="result-synopsis">{{ result.synopsis.substring(0, 275) }}...</p>
+                        </div>
+                    </div>
+                    <button v-if="showViewMore" @click="loadMoreResults" class="view-more-button">View More</button>
+                </div>
+            </div>
+            <div class="right-wrapper">
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Community</p>
+                    </div>
+                </div>
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Statistics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authentication Page -->
+        <div v-if="currentPage === 'authentication'" class="authentication-page">
+            <!-- Auth Container for Login -->
+            <div v-if="isLoginFormVisible" class="auth-container">
+                <h2 class="auth-heading">Login</h2>
+                <form class="auth-form" @submit.prevent="loginUser">
+                    <label for="login-email" class="auth-label">Email:</label>
+                    <input type="email" id="login-email" v-model="loginEmail" class="auth-input"
+                        placeholder="Enter your email">
+
+                    <label for="login-password" class="auth-label">Password:</label>
+                    <input type="password" id="login-password" v-model="loginPassword" class="auth-input"
+                        placeholder="Enter your password">
+
+                    <button type="submit" class="auth-button">Log In</button>
+                </form>
+                <p class="switch-link">
+                    New user? <span class="link-text" @click="toggleForm">Create an account here.</span>
+                </p>
+            </div>
+
+
+            <!-- Auth Container for Registration -->
+            <div v-else class="auth-container">
+                <h2 class="auth-heading">Register</h2>
+                <form class="auth-form"
+                    @submit.prevent="registerUser(registerEmail, registerPassword, registerUsername)">
+                    <label for="register-email" class="auth-label">Email:</label>
+                    <input type="email" id="register-email" v-model="registerEmail" class="auth-input"
+                        placeholder="Enter your email">
+
+                    <label for="register-username" class="auth-label">Username:</label>
+                    <input type="text" id="register-username" v-model="registerUsername" class="auth-input"
+                        placeholder="Choose a username">
+
+                    <label for="register-password" class="auth-label">Password:</label>
+                    <input type="password" id="register-password" v-model="registerPassword" class="auth-input"
+                        placeholder="Enter your password">
+
+                    <label for="confirm-password" class="auth-label">Confirm Password:</label>
+                    <input type="password" id="confirm-password" v-model="confirmPassword" class="auth-input"
+                        placeholder="Confirm your password">
+
+                    <button type="submit" class="auth-button">Register</button>
+                </form>
+
+                <p class="switch-link">
+                    Already have an account? <span class="link-text" @click="toggleForm">Log in here.</span>
+                </p>
+            </div>
+        </div>
+
+
+
     </div>
     <script src="vue-app.js"></script>
 </body>
