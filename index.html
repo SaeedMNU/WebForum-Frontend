@@ -93,6 +93,61 @@
             </div>
         </div>
 
+        <div v-if="currentPage === 'mediaInfo'" class="media-info-page">
+            <div class="left-wrapper">
+                <div class="left-container">
+                    <div class="media-header">
+                        <h2>{{ media.title || "N/A" }}</h2>
+                        <a :href="media.trailer_url || '#'" target="_blank" class="trailer-link">Watch Trailer</a>
+                    </div>
+                    <div class="media-info-wrapper">
+                        <div class="poster-wrapper">
+                            <img :src="media.main_picture || 'default-image-url.jpg'" alt="Poster" class="media-poster">
+                            <div class="titles-wrapper">
+                                <template v-for="field in titlesFields">
+                                    <p
+                                        v-if="media[field.key] && (Array.isArray(media[field.key]) ? media[field.key].length : true)">
+                                        <strong>{{ field.label }}:</strong><br>
+                                        {{ Array.isArray(media[field.key]) ? media[field.key].join(', ') :
+                                        media[field.key] }}
+                                    </p>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="right-details">
+                            <template v-for="field in detailsFields">
+                                <p
+                                    v-if="media[field.key] && (Array.isArray(media[field.key]) ? media[field.key].length : true)">
+                                    <strong>{{ field.label }}:</strong>
+                                    {{ Array.isArray(media[field.key]) ? media[field.key].join(', ') : media[field.key]
+                                    }}
+                                </p>
+                            </template>
+                        </div>
+                        <div class="extra-stats">
+                            <p><strong>Score:</strong><br> {{ media.score || "--" }}</p>
+                            <p><strong>Scored By:</strong><br> {{ media.scored_by || "--" }}</p>
+                            <p><strong>Members:</strong><br> {{ media.members || "--" }}</p>
+                            <p><strong>Favourited:</strong><br> {{ media.favourites || "--" }}</p>
+                        </div>
+                    </div>
+
+                    <h2>Synopsis</h2>
+                    <p>{{ media.synopsis || "No synopsis available." }}</p>
+                    <h2>Background</h2>
+                    <p>{{ media.background || "No background available." }}</p>
+                </div>
+            </div>
+
+            <div class="right-wrapper">
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Community</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Authentication Page -->
         <div v-if="currentPage === 'authentication'" class="authentication-page">
             <!-- Auth Container for Login -->
