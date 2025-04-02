@@ -545,3 +545,112 @@ body {
 .authentication-page .link-text:hover {
     color: white;
 }
+
+
+
+
+
+
+/* Profile Page Container */
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+    padding: 10px;
+}
+
+.profile-container {
+    width: 100%;
+    max-width: 800px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding: 20px;
+}
+
+/* Profile Header */
+.profile-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid red;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid red;
+    margin-right: 20px;
+}
+
+.profile-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-name-row {
+    display: flex;
+    align-items: center;
+}
+
+.profile-displayName {
+    font-size: 2em;
+    color: red;
+    margin: 0;
+}
+
+.profile-createdAt {
+    font-size: 1em;
+    color: white;
+}
+
+/* Profile Bio Section */
+.profile-bio {
+    margin-top: 15px;
+}
+
+.profile-bio p {
+    font-size: 1em;
+    color: white;
+}
+
+.profile-bio-input {
+    width: 100%;
+    min-height: 100px;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: none;
+    resize: vertical;
+    margin-top: 10px;
+}
+
+/* Profile Button Container */
+.profile-button-container {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+
+/* Edit/Save Button Styling */
+.profile-edit-button {
+    background: red;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.profile-edit-button:hover {
+    background: white;
+    color: red;
+}

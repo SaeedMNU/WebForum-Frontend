@@ -25,6 +25,8 @@
                 <div class="dropdown">
                     <button class="dropdown-button" @click="toggleDropdown">▼</button>
                     <ul class="dropdown-menu" v-if="dropdownOpen">
+                        <li class="dropdown-item" v-if="isAuthenticated" @click.prevent="showPage('profile')">Profile
+                        </li>
                         <li class="dropdown-item" v-if="isAuthenticated" @click.prevent="logoutUser">Logout</li>
                         <li class="dropdown-item" v-else @click.prevent="showPage('authentication')">Login/Register</li>
                         <li class="dropdown-item" @click.prevent="showPage('settings')">Settings</li>
@@ -198,6 +200,49 @@
                 <p class="switch-link">
                     Already have an account? <span class="link-text" @click="toggleForm">Log in here.</span>
                 </p>
+            </div>
+        </div>
+
+
+        <!-- Profile Page Content -->
+        <div v-if="currentPage === 'profile'" class="profile-page">
+            <div class="profile-container">
+                <div class="profile-header">
+                    <img :src="user.profile_picture || '/images/default-profile.png'" alt="Profile Picture"
+                        class="profile-image">
+                    <div class="profile-info">
+                        <div class="profile-name-row">
+                            <h2 class="profile-displayName">
+                                {{ user.displayName || user.username || "Guest" }}
+                            </h2>
+                        </div>
+                        <p class="profile-createdAt">
+                            Joined: <span>{{ joinedDate }}</span>
+                        </p>
+                        <div v-if="editMode" class="profile-picture-upload">
+                            <input type="file" @change="handleFileUpload" accept="image/*" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Bio/Other Section -->
+                <div class="profile-bio">
+                    <div v-if="editMode">
+                        <textarea v-model="editedBio" class="profile-bio-input"
+                            placeholder="Enter your bio..."></textarea>
+                    </div>
+                    <div v-else>
+                        <p>{{ user.bio || "No biography has been set for this user yet." }}</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="profile-button-container" v-if="isAuthenticated">
+                <button class="profile-edit-button" @click="toggleEditMode">
+                    {{ editMode ? "Save Changes" : "Edit Profile" }}
+                </button>
             </div>
         </div>
 

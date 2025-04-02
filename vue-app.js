@@ -9,7 +9,7 @@ let mediaForum = new Vue({
         // Fields for login:
         loginEmail: "",
         loginPassword: "",
-        // Fields for registration (already available):
+        // Fields for registration:
         registerEmail: "",
         registerUsername: "",
         registerPassword: "",
@@ -17,6 +17,27 @@ let mediaForum = new Vue({
         // Authentication state:
         isAuthenticated: false,
         idToken: "",
+        // New user profile object:
+        user: {
+            uid: "",
+            email: "",
+            username: "",
+            displayName: "",
+            profile_picture: "",
+            bio: "",
+            created_at: null,
+            forum_posts_count: 0,
+            social_posts_count: 0,
+            likes_received: 0,
+            dislikes_received: 0,
+            completed_media_ids: [],
+            website_role: "user",
+            theme: ""
+        },
+        // properties for editing profile
+        editMode: false,
+        editedBio: "",
+        // Other properties:
         searchQuery: "",
         searchResults: [],
         visibleResults: [],
@@ -56,6 +77,26 @@ let mediaForum = new Vue({
             { key: "licensors", label: "Licensors" }
         ]
     },
+    computed: {
+        joinedDate() {
+            if (this.user.created_at) {
+                let seconds = null;
+                if (this.user.created_at.seconds) {
+                    seconds = this.user.created_at.seconds;
+                } else if (this.user.created_at._seconds) {
+                    seconds = this.user.created_at._seconds;
+                }
+                if (seconds !== null) {
+                    const date = new Date(seconds * 1000);
+                    const year = date.getFullYear();
+                    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+                    const day = ("0" + date.getDate()).slice(-2);
+                    return `${year}/${month}/${day}`;
+                }
+            }
+            return "Unknown";
+        }
+    },
     methods: {
         toggleDropdown() {
             this.dropdownOpen = !this.dropdownOpen;
@@ -80,7 +121,7 @@ let mediaForum = new Vue({
             };
 
             try {
-                const response = await fetch('http://localhost:5000/api/auth/register', { // Ensure the URL is correct
+                const response = await fetch('http://localhost:5000/api/auth/register', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -114,11 +155,25 @@ let mediaForum = new Vue({
                     const data = await response.json();
                     console.log("Login successful:", data);
                     this.isAuthenticated = true;
-                    this.username = data.email;
                     this.idToken = data.idToken;
-                    // Save the token to localStorage for session persistence
                     localStorage.setItem("idToken", data.idToken);
-                    this.showPage("browse");
+
+                    // Update the user object based on the login result
+                    this.user.uid = data.localId;
+                    this.user.email = data.email;
+                    this.user.displayName = data.displayName || "";
+                    this.user.username = data.displayName && data.displayName.trim() !== ""
+                        ? data.displayName
+                        : this.loginEmail;
+                    // Save the uid in localStorage as well
+                    localStorage.setItem("userUid", data.localId);
+
+                    // Update the header username immediately
+                    this.username = this.user.displayName || this.user.username || this.loginEmail;
+
+                    // Load full profile details from Firestore
+                    await this.getUserProfile();
+                    this.showPage("home");
                 } else {
                     console.error("Error during login.");
                     this.isAuthenticated = false;
@@ -128,6 +183,7 @@ let mediaForum = new Vue({
                 this.isAuthenticated = false;
             }
         },
+
         // Check authentication state by sending the token to a backend /authState endpoint
         async checkAuthState() {
             const token = localStorage.getItem("idToken");
@@ -219,12 +275,129 @@ let mediaForum = new Vue({
                 console.error("Error fetching media details:", err);
             }
         },
+        async getUserProfile() {
+            // First, ensure that uid is set. Try reading from localStorage if it's missing.
+            let uid = this.user.uid;
+            if (!uid) {
+                uid = localStorage.getItem("userUid");
+                if (uid) {
+                    this.user.uid = uid;
+                }
+            }
+
+            const token = localStorage.getItem("idToken");
+            if (!token || !uid) return; // If we don't have token or uid, do not proceed.
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/${uid}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    }
+                });
+                if (response.ok) {
+                    const profileData = await response.json();
+                    // Update the user object with the fetched data
+                    this.user = { ...this.user, ...profileData };
+                } else {
+                    console.error("Failed to load user profile data.");
+                }
+            } catch (error) {
+                console.error("Error loading user profile:", error.message);
+            }
+        },
+        // Toggle between view and edit mode
+        toggleEditMode() {
+            if (!this.editMode) {
+                // When entering edit mode, copy the existing bio into editedBio
+                this.editedBio = this.user.bio || "";
+                this.editMode = true;
+            } else {
+                // When saving changes, call updateProfile()
+                this.updateProfile();
+            }
+        },
+
+        // Update the user profile
+        async updateProfile() {
+            const token = localStorage.getItem("idToken");
+            if (!token || !this.user.uid) return;
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/${this.user.uid}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ bio: this.editedBio })
+                });
+                if (response.ok) {
+                    const updatedProfile = await response.json();
+                    this.user = { ...this.user, ...updatedProfile };
+                    this.username = this.user.displayName || this.user.username || "Guest";
+                    console.log("Profile updated successfully.");
+                } else {
+                    console.error("Failed to update profile.");
+                }
+            } catch (error) {
+                console.error("Error updating profile:", error.message);
+            }
+            // Exit edit mode after saving.
+            this.editMode = false;
+        },
+        // Called when the file input changes
+        async handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const uid = this.user.uid;
+            const token = localStorage.getItem("idToken");
+            if (!uid || !token) return;
+
+            // Creates a FormData object and append the file
+            const formData = new FormData();
+            formData.append("profilePicture", file);
+
+            try {
+                const response = await fetch(`http://localhost:5000/api/users/${uid}/uploadProfilePicture`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: formData
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    // Update the user object’s profile picture
+                    this.user.profile_picture = result.profile_picture;
+                    console.log("Profile picture updated:", result.profile_picture);
+                } else {
+                    console.error("Failed to update profile picture.");
+                }
+            } catch (error) {
+                console.error("Error uploading file:", error.message);
+            }
+        },
+
+
 
     },
     created() {
-        // Check authentication state when the app is created
+        // Check auth state of user
         this.checkAuthState();
+
+        // Restore session details if available
+        const storedToken = localStorage.getItem("idToken");
+        const storedUid = localStorage.getItem("userUid");
+        if (storedToken && storedUid) {
+            this.idToken = storedToken;
+            this.user.uid = storedUid;
+            this.isAuthenticated = true;
+            this.getUserProfile();
+        }
     }
+
 });
 
 
