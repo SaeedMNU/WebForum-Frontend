@@ -25,7 +25,8 @@
                 <div class="dropdown">
                     <button class="dropdown-button" @click="toggleDropdown">▼</button>
                     <ul class="dropdown-menu" v-if="dropdownOpen">
-                        <li class="dropdown-item" @click.prevent="showPage('authentication')">Authentication</li>
+                        <li class="dropdown-item" v-if="isAuthenticated" @click.prevent="logoutUser">Logout</li>
+                        <li class="dropdown-item" v-else @click.prevent="showPage('authentication')">Login/Register</li>
                         <li class="dropdown-item" @click.prevent="showPage('settings')">Settings</li>
                     </ul>
                 </div>
