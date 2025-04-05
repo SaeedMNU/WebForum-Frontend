@@ -456,6 +456,108 @@ body {
     line-height: 1.5;
 }
 
+/* Media List Control Styling */
+.media-info-page .media-list-control {
+    margin-top: 15px;
+    text-align: center;
+}
+
+/* Revert styling for the main media list control button */
+.media-info-page .media-list-control>button {
+    background: transparent;
+    border: 2px solid red;
+    padding: 10px 15px;
+    color: red;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    outline: none;
+}
+
+.media-info-page .media-list-control>button:hover {
+    background-color: red;
+    color: white;
+}
+
+
+/* Extra Actions Container */
+.media-info-page .media-list-actions {
+    margin-top: 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    /* subtly different background */
+    border: 2px solid red;
+    border-radius: 10px;
+}
+
+.media-info-page .media-list-actions button {
+    background: red;
+    /* Default now has a red background */
+    border: 2px solid red;
+    padding: 8px 12px;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    outline: none;
+    margin-bottom: 10px;
+}
+
+.media-info-page .media-list-actions button:hover {
+    background-color: transparent;
+    color: red;
+}
+
+/* Score Section */
+.media-info-page .media-list-actions .score-section {
+    margin-bottom: 10px;
+}
+
+.media-info-page .media-list-actions .score-section label {
+    color: white;
+    font-size: 1em;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.media-info-page .media-list-actions .score-section input[type="number"] {
+    width: 80px;
+    padding: 5px;
+    border: 1px solid red;
+    border-radius: 5px;
+    background: transparent;
+    color: white;
+}
+
+/* Favourite Section */
+.media-info-page .media-list-actions .favourite-section {
+    margin-bottom: 10px;
+}
+
+.media-info-page .media-list-actions .favourite-section label {
+    color: white;
+    font-size: 1em;
+}
+
+.media-info-page .media-list-actions>button:last-of-type {
+    background: red;
+    border: 2px solid red;
+    padding: 10px 15px;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    outline: none;
+}
+
+.media-info-page .media-list-actions>button:last-of-type:hover {
+    background-color: transparent;
+    color: red;
+}
+
 
 
 

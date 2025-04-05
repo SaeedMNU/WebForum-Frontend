@@ -96,6 +96,7 @@
             </div>
         </div>
 
+        <!-- Media Information Page Content -->
         <div v-if="currentPage === 'mediaInfo'" class="media-info-page">
             <div class="left-wrapper">
                 <div class="left-container">
@@ -132,7 +133,37 @@
                             <p><strong>Scored By:</strong><br> {{ media.scored_by || "--" }}</p>
                             <p><strong>Members:</strong><br> {{ media.members || "--" }}</p>
                             <p><strong>Favourited:</strong><br> {{ media.favourites || "--" }}</p>
+
+                            <h3>My List Entry:</h3>
+
+                            <div class="media-list-control" v-if="isAuthenticated">
+                                <button @click="inList ? toggleExtraActions() : addMediaToList(media.media_id)">
+                                    {{ inList ? "EDIT - " : "ADD - " }}{{ media.title }}
+                                </button>
+
+                                <div v-if="inList && showExtraActions" class="media-list-actions">
+                                    <button @click="removeMediaFromList(media.media_id)">Remove {{ media.title
+                                        }}</button>
+
+                                    <div class="score-section">
+                                        <label>Score (1-10):</label>
+                                        <input type="number" v-model.number="userScore" min="1" max="10" step="1">
+                                    </div>
+
+                                    <div class="favourite-section">
+                                        <label>
+                                            <input type="checkbox" v-model="userFavourited">
+                                            Favourite
+                                        </label>
+                                    </div>
+
+                                    <button @click="updateMediaEntry()">Update Changes</button>
+                                </div>
+                            </div>
+
+
                         </div>
+
                     </div>
 
                     <h2>Synopsis</h2>
