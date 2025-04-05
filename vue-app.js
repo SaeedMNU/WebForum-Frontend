@@ -173,7 +173,7 @@ let mediaForum = new Vue({
                         ? data.displayName
                         : this.loginEmail;
 
-                        localStorage.setItem("userUid", data.localId);
+                    localStorage.setItem("userUid", data.localId);
 
                     this.username = this.user.displayName || this.user.username || this.loginEmail;
 
@@ -369,7 +369,9 @@ let mediaForum = new Vue({
                     const data = await response.json();
                     if (data.success) {
                         console.log("Media entry updated successfully.");
+
                         await this.fetchUserMediaEntry(this.media.media_id);
+                        await this.refreshMediaDetails(this.media._id);
                     } else {
                         console.error("Failed to update media entry.");
                     }
@@ -378,6 +380,25 @@ let mediaForum = new Vue({
                 }
             } catch (error) {
                 console.error("Exception in updateMediaEntry:", error);
+            }
+        },
+        async refreshMediaDetails(mediaObjectId) {
+            try {
+                const response = await fetch(`/api/media/details/${mediaObjectId}`, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                if (response.ok) {
+                    const updatedMedia = await response.json();
+
+                    this.media.score = updatedMedia.score;
+                    this.media.scored_by = updatedMedia.scored_by;
+                    this.media.members = updatedMedia.members;
+                    this.media.favourites = updatedMedia.favourites;
+                } else {
+                    console.error("Error refreshing media details:", await response.text());
+                }
+            } catch (error) {
+                console.error("Error in refreshMediaDetails:", error);
             }
         },
         async viewMediaInfo(id) {
