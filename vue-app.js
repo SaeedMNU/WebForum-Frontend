@@ -16,6 +16,7 @@ let mediaForum = new Vue({
         registerPassword: "",
         confirmPassword: "",
         // Authentication state:
+        authError: "",
         isAuthenticated: false,
         idToken: "",
         // New user profile object:
@@ -127,6 +128,15 @@ let mediaForum = new Vue({
             if (newVal === "topic-posts" && this.selectedTopicId) {
                 this.fetchPosts();
             }
+            if (newVal !== 'forum') {
+                this.showCreateForumForm = false;
+            }
+            if (newVal !== 'forum-topics') {
+                this.showCreateTopicForm = false;
+            }
+            if (newVal !== 'topic-posts') {
+                this.showCreatePostForm = false;
+            }
         }
     },
     computed: {
@@ -167,6 +177,7 @@ let mediaForum = new Vue({
         // Registration method that sends user data to the backend to authenticate using Firebase authentication
         async registerUser() {
             if (this.registerPassword !== this.confirmPassword) {
+                this.authError = "Passwords do not match.";
                 console.error("Passwords do not match.");
                 return;
             }
@@ -188,17 +199,20 @@ let mediaForum = new Vue({
 
                 if (response.ok) {
                     const result = await response.json();
-                    this.showPage("home");
+                    this.authError = "";
+                    this.isLoginFormVisible = true;
                     this.registerEmail = '';
                     this.registerUsername = '';
                     this.registerPassword = '';
                     this.confirmPassword = '';
                 } else {
                     const error = await response.json();
+                    this.authError = error.error;
                     console.error("Error during registration:", error.error);
                 }
             } catch (error) {
                 console.error("Unexpected error during registration:", error.message);
+                this.authError = error.message;
             }
         },
         // Login method that sends user data to the backend to authenticate using Firebase authentication
@@ -214,41 +228,38 @@ let mediaForum = new Vue({
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    console.log("Login successful:", data);
+                    this.authError = "";
                     this.isAuthenticated = true;
                     this.idToken = data.idToken;
                     localStorage.setItem("idToken", data.idToken);
 
-                    // Update the user object based on the login result
                     this.user.uid = data.localId;
                     this.user.email = data.email;
                     this.user.displayName = data.displayName || "";
-                    this.user.username = data.displayName && data.displayName.trim() !== ""
+                    this.user.username = (data.displayName && data.displayName.trim() !== "")
                         ? data.displayName
                         : this.loginEmail;
-                    // Saves the uid in localStorage as well
                     localStorage.setItem("userUid", data.localId);
-
-                    // Update the header username
                     this.username = this.user.displayName || this.user.username || this.loginEmail;
 
-                    // Load full profile details from Firestore
+                    // Load the full profile details
                     await this.getUserProfile();
 
-                    // Navigate to the profile page
                     this.showPage("home");
                     this.loginEmail = '';
                     this.loginPassword = '';
                 } else {
-                    console.error("Error during login.");
+                    const errorData = await response.json();
+                    this.authError = errorData.error || "Unknown login error.";
+                    console.error("Error during login:", this.authError);
                     this.isAuthenticated = false;
                 }
             } catch (error) {
                 console.error("Unexpected error during login:", error.message);
+                this.authError = error.message;
                 this.isAuthenticated = false;
             }
         },
-
         // Check authentication state by sending the token to a backend /authState endpoint
         async checkAuthState() {
             const token = localStorage.getItem("idToken");
@@ -607,12 +618,6 @@ let mediaForum = new Vue({
         // Toggle the display of the create forum form
         toggleCreateForumForm() {
             this.showCreateForumForm = !this.showCreateForumForm;
-            if (!this.showCreateForumForm) {
-                // Reset form when hiding the form.
-                this.newForum.category = "";
-                this.newForum.name = "";
-                this.newForum.description = "";
-            }
         },
         // Fetch existing forums from the backend
         async fetchForums() {
@@ -654,6 +659,9 @@ let mediaForum = new Vue({
                     // Refresh the forums list.
                     await this.fetchForums();
                     this.toggleCreateForumForm();
+                    this.newForum.category = "";
+                    this.newForum.name = "";
+                    this.newForum.description = "";
                 } else {
                     console.error("Error creating forum:", await response.text());
                 }
@@ -675,12 +683,6 @@ let mediaForum = new Vue({
         // Toggle the display of the create topic form
         toggleCreateTopicForm() {
             this.showCreateTopicForm = !this.showCreateTopicForm;
-            if (!this.showCreateTopicForm) {
-                // Clear form when closing
-                this.newTopic.title = '';
-                this.newTopic.content = '';
-            }
-            this.fetchForums();
         },
         // Create a new topic by sending form data to the backend
         async createTopic() {
@@ -706,6 +708,9 @@ let mediaForum = new Vue({
                         author_displayName: this.user.username
                     });
                     this.toggleCreateTopicForm();
+                    this.fetchForums();
+                    this.newTopic.title = "";
+                    this.newTopic.content = "";
                 } else {
                     const errText = await response.text();
                     console.error('Error creating topic:', errText);
@@ -823,9 +828,6 @@ let mediaForum = new Vue({
         // Toggle the display of the create post form
         toggleCreatePostForm() {
             this.showCreatePostForm = !this.showCreatePostForm;
-            if (!this.showCreatePostForm) {
-                this.newPost.content = "";
-            }
         },
 
     },

@@ -1322,6 +1322,17 @@ body {
     color: white;
 }
 
+.error-feedback {
+    color: #ff4d4f;
+    background: rgba(255, 0, 0, 0.1);
+    padding: 10px;
+    border: 1px solid red;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+
 
 
 

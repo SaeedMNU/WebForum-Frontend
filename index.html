@@ -407,6 +407,9 @@
 
                     <button type="submit" class="auth-button">Log In</button>
                 </form>
+
+                <!-- Error Feedback -->
+                <p v-if="authError" class="error-feedback">{{ authError }}</p>
                 <p class="switch-link">
                     New user? <span class="link-text" @click="toggleForm">Create an account here.</span>
                 </p>
@@ -437,6 +440,8 @@
                     <button type="submit" class="auth-button">Register</button>
                 </form>
 
+                <!-- Error Feedback -->
+                <p v-if="authError" class="error-feedback">{{ authError }}</p>
                 <p class="switch-link">
                     Already have an account? <span class="link-text" @click="toggleForm">Log in here.</span>
                 </p>
