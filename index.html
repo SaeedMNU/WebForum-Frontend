@@ -40,13 +40,136 @@
 
         <!-- Home Page Content -->
         <div v-if="currentPage === 'home'" class="home-page">
+            <!-- Left Wrapper for media categories -->
             <div class="left-wrapper">
+                <!-- Discovery -->
                 <div class="left-container">
                     <div class="heading-wrapper">
-                        <p>Home</p>
+                        <p>Discovery</p>
+                    </div>
+                    <div class="category-results">
+                        <div v-for="item in homeCategories.discovery" :key="item._id" class="media-item"
+                            @click.prevent="viewMediaInfo(item._id)">
+                            <img :src="item.main_picture" alt="Poster" class="media-poster">
+                            <div class="media-item-info">
+                                <p class="media-title">
+                                    {{ item.title && item.title.length > 25 ? item.title.substring(0, 25) + '...' :
+                                    item.title }}
+                                </p>
+                                <p class="media-snippet">
+                                    {{ item.synopsis ? item.synopsis.substring(0, 50) : '' }}...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Interested in? -->
+                <div class="left-container">
+                    <div class="heading-wrapper">
+                        <p>
+                            Interested in
+                            <span class="label" v-if="homeCategories.interested.genre">
+                                {{ homeCategories.interested.genre }}?
+                            </span>
+                        </p>
+                    </div>
+                    <div class="category-results">
+                        <div v-for="item in homeCategories.interested.items" :key="item._id" class="media-item"
+                            @click.prevent="viewMediaInfo(item._id)">
+                            <img :src="item.main_picture" alt="Poster" class="media-poster">
+                            <div class="media-item-info">
+                                <p class="media-title">
+                                    {{ item.title && item.title.length > 25 ? item.title.substring(0, 25) + '...' :
+                                    item.title }}
+                                </p>
+                                <p class="media-snippet">
+                                    {{ item.synopsis ? item.synopsis.substring(0, 25) : '' }}...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Fan of? -->
+                <div class="left-container">
+                    <div class="heading-wrapper">
+                        <p>
+                            Fan of
+                            <span class="label" v-if="homeCategories.fanOf.studio">
+                                {{ homeCategories.fanOf.studio }}?
+                            </span>
+                        </p>
+                    </div>
+                    <div class="category-results">
+                        <div v-for="item in homeCategories.fanOf.items" :key="item._id" class="media-item"
+                            @click.prevent="viewMediaInfo(item._id)">
+                            <img :src="item.main_picture" alt="Poster" class="media-poster">
+                            <div class="media-item-info">
+                                <p class="media-title">
+                                    {{ item.title && item.title.length > 25 ? item.title.substring(0, 25) + '...' :
+                                    item.title }}
+                                </p>
+                                <p class="media-snippet">
+                                    {{ item.synopsis ? item.synopsis.substring(0, 25) : '' }}...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- More from? (Licensors) -->
+                <div class="left-container">
+                    <div class="heading-wrapper">
+                        <p>
+                            More from:
+                            <span class="label" v-if="homeCategories.moreFrom.licensor">
+                                {{ homeCategories.moreFrom.licensor }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="category-results">
+                        <div v-for="item in homeCategories.moreFrom.items" :key="item._id" class="media-item"
+                            @click.prevent="viewMediaInfo(item._id)">
+                            <img :src="item.main_picture" alt="Poster" class="media-poster">
+                            <div class="media-item-info">
+                                <p class="media-title">
+                                    {{ item.title && item.title.length > 25 ? item.title.substring(0, 25) + '...' :
+                                    item.title }}
+                                </p>
+                                <p class="media-snippet">
+                                    {{ item.synopsis ? item.synopsis.substring(0, 25) : '' }}...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Rewind back to -->
+                <div class="left-container">
+                    <div class="heading-wrapper">
+                        <p>
+                            Rewind back to
+                            <span class="label" v-if="homeCategories.rewindBackTo.year">
+                                {{ homeCategories.rewindBackTo.year }}
+                            </span>
+                        </p>
+                    </div>
+                    <div class="category-results">
+                        <div v-for="item in homeCategories.rewindBackTo.items" :key="item._id" class="media-item"
+                            @click.prevent="viewMediaInfo(item._id)">
+                            <img :src="item.main_picture" alt="Poster" class="media-poster">
+                            <div class="media-item-info">
+                                <p class="media-title">
+                                    {{ item.title && item.title.length > 25 ? item.title.substring(0, 25) + '...' :
+                                    item.title }}
+                                </p>
+                                <p class="media-snippet">
+                                    {{ item.synopsis ? item.synopsis.substring(0, 25) : '' }}...
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Right Wrapper for Community (as before) -->
             <div class="right-wrapper">
                 <div class="right-container">
                     <div class="heading-wrapper">
@@ -55,6 +178,9 @@
                 </div>
             </div>
         </div>
+
+
+
 
         <!-- Browse Media Page Content -->
         <div v-if="currentPage === 'browse'" class="browse-page">
@@ -68,11 +194,11 @@
                 </div>
                 <!-- Search Results Container -->
                 <div v-if="searchQuery.trim().length > 0 && visibleResults.length > 0" class="search-results-container">
-                    <div v-for="(result, index) in visibleResults" :key="result.media_id" class="search-result-box">
-                        <img @click.prevent="viewMediaInfo(result._id)" :src="result.main_picture" alt="Poster"
-                            class="result-poster">
+                    <div v-for="(result, index) in visibleResults" :key="result.media_id"
+                        @click.prevent="viewMediaInfo(result._id)" class="search-result-box">
+                        <img :src="result.main_picture" alt="Poster" class="result-poster">
                         <div class="result-details">
-                            <a @click.prevent="viewMediaInfo(result._id)" class="result-title">{{ result.title }}</a>
+                            <a class="result-title">{{ result.title }}</a>
                             <p class="result-type">
                                 {{ result.type }} -
                                 {{ result.premiered_season }}

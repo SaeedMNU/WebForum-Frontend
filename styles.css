@@ -141,12 +141,59 @@ body {
     padding-bottom: 20px;
 }
 
-.heading-wrapper {
+.home-page .heading-wrapper {
     text-align: center;
     color: red;
     font-size: 1.3em;
     font-weight: bold;
 }
+
+.home-page .category-results {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    padding-top: 10px;
+}
+
+.home-page .media-item {
+    display: flex;
+    align-items: flex-start;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 5px;
+    border-radius: 5px;
+    min-width: 250px;
+}
+
+.home-page .media-item img.media-poster {
+    width: 80px;
+    height: 120px;
+    object-fit: cover;
+    margin-right: 10px;
+}
+
+.home-page .media-item-info {
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-page .media-title {
+    color: red;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+}
+
+.home-page .media-snippet {
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.home-page .label {
+    color: white;
+}
+
+
 
 
 

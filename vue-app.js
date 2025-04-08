@@ -5,7 +5,7 @@ let mediaForum = new Vue({
         sitename: "Media Forum",
         username: "Guest",
         dropdownOpen: false,
-        currentPage: "forum",
+        currentPage: "home",
         isLoginFormVisible: true,
         // Fields for login:
         loginEmail: "",
@@ -58,8 +58,8 @@ let mediaForum = new Vue({
             { key: "volumes", label: "Volumes" },
             { key: "chapters", label: "Chapters" },
             { key: "episodes", label: "Episodes" },
-            { key: "aired_from", label: "Aired" },
-            { key: "aired_to", label: "To" },
+            { key: "aired_from", label: "Aired from" },
+            { key: "aired_to", label: "Aired to" },
             { key: "published_from", label: "Published from" },
             { key: "published_to", label: "Published to" },
             { key: "source", label: "Source" },
@@ -78,6 +78,13 @@ let mediaForum = new Vue({
             { key: "producers", label: "Producers" },
             { key: "licensors", label: "Licensors" }
         ],
+        homeCategories: {
+            discovery: [],
+            interested: { genre: '', items: [] },
+            fanOf: { studio: '', items: [] },
+            moreFrom: { licensor: '', items: [] },
+            rewindBackTo: { year: '', items: [] }
+        },
         // User related media properties:
         inList: false,
         showExtraActions: false,
@@ -510,6 +517,19 @@ let mediaForum = new Vue({
                 console.error("Error fetching media details:", err);
             }
         },
+        async fetchHomeMedia() {
+            try {
+                const response = await fetch("http://localhost:5000/api/media/home");
+                if (response.ok) {
+                    const data = await response.json();
+                    this.homeCategories = data;
+                } else {
+                    console.error("Failed to load home media data.");
+                }
+            } catch (error) {
+                console.error("Error fetching home media:", error);
+            }
+        },
 
 
         // Fetch the user's profile from the backend using the uid and token
@@ -846,6 +866,8 @@ let mediaForum = new Vue({
             this.isAuthenticated = true;
             this.getUserProfile();
         }
+
+        this.fetchHomeMedia();
     }
 
 });
