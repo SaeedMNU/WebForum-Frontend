@@ -96,6 +96,12 @@ body {
     background-color: #f0f0f0;
 }
 
+.heading-wrapper {
+    text-align: center;
+    color: red;
+    font-size: 1.3em;
+    font-weight: bold;
+}
 
 
 
@@ -139,13 +145,6 @@ body {
     border-radius: 15px;
     padding-inline: 20px;
     padding-bottom: 20px;
-}
-
-.home-page .heading-wrapper {
-    text-align: center;
-    color: red;
-    font-size: 1.3em;
-    font-weight: bold;
 }
 
 .home-page .category-results {
