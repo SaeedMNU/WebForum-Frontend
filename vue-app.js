@@ -1,19 +1,24 @@
 let mediaForum = new Vue({
     el: "#app",
     data: {
+        // Default site values for the app:
         sitename: "Media Forum",
         username: "Guest",
         dropdownOpen: false,
-        currentPage: "browse",
+        currentPage: "forum",
         isLoginFormVisible: true,
+        // Fields for login:
         loginEmail: "",
         loginPassword: "",
+        // Fields for registration:
         registerEmail: "",
         registerUsername: "",
         registerPassword: "",
         confirmPassword: "",
+        // Authentication state:
         isAuthenticated: false,
         idToken: "",
+        // New user profile object:
         user: {
             uid: "",
             email: "",
@@ -30,8 +35,10 @@ let mediaForum = new Vue({
             website_role: "user",
             theme: ""
         },
+        // For editing user site data:
         editMode: false,
         editedBio: "",
+        // For dynamic media search and display:
         searchQuery: "",
         searchResults: [],
         visibleResults: [],
@@ -70,13 +77,43 @@ let mediaForum = new Vue({
             { key: "producers", label: "Producers" },
             { key: "licensors", label: "Licensors" }
         ],
+        // User related media properties:
         inList: false,
         showExtraActions: false,
         mediaEntry: null,
         userScore: "",
         userFavourited: false,
+        // Forum properties:
+        forumCategories: ["General", "Media", "Industry"],
+        loadedForums: [],
+        showCreateForumForm: false,
+        newForum: {
+            category: "",
+            name: "",
+            description: ""
+        },
+        selectedForumName: '',
+        selectedForumId: '',
+        topics: [],
+        userDisplayNames: {},
+        showCreateTopicForm: false,
+        newTopic: {
+            title: '',
+            content: ''
+        },
+        selectedTopicId: '',
+        selectedTopicTitle: "",
+        selectedTopicAuthor: "",
+        selectedTopicAuthorDisplay: "",
+        selectedTopicContent: '',
+        posts: [],
+        showCreatePostForm: false,
+        newPost: {
+            content: ''
+        },
     },
     watch: {
+        // Watch for changes in the current page and update certain states accordingly
         currentPage(newVal, oldVal) {
             if (newVal !== 'mediaInfo') {
                 this.showExtraActions = false;
@@ -84,9 +121,16 @@ let mediaForum = new Vue({
             if (newVal !== 'profile') {
                 this.editMode = false;
             }
+            if (newVal === 'forum-topics' && this.selectedForumId) {
+                this.fetchTopics();
+            }
+            if (newVal === "topic-posts" && this.selectedTopicId) {
+                this.fetchPosts();
+            }
         }
     },
     computed: {
+        // Computed property to format the user's joined date
         joinedDate() {
             if (this.user.created_at) {
                 let seconds = null;
@@ -107,16 +151,20 @@ let mediaForum = new Vue({
         }
     },
     methods: {
+        // Method to toggle the dropdown menu
         toggleDropdown() {
             this.dropdownOpen = !this.dropdownOpen;
         },
+        // Method to allow for page navigation & close the dropdown menu
         showPage(page) {
             this.currentPage = page;
             this.dropdownOpen = false;
         },
+        // Method to toggle between login and registration forms
         toggleForm() {
             this.isLoginFormVisible = !this.isLoginFormVisible;
         },
+        // Registration method that sends user data to the backend to authenticate using Firebase authentication
         async registerUser() {
             if (this.registerPassword !== this.confirmPassword) {
                 console.error("Passwords do not match.");
@@ -141,6 +189,10 @@ let mediaForum = new Vue({
                 if (response.ok) {
                     const result = await response.json();
                     this.showPage("home");
+                    this.registerEmail = '';
+                    this.registerUsername = '';
+                    this.registerPassword = '';
+                    this.confirmPassword = '';
                 } else {
                     const error = await response.json();
                     console.error("Error during registration:", error.error);
@@ -149,6 +201,7 @@ let mediaForum = new Vue({
                 console.error("Unexpected error during registration:", error.message);
             }
         },
+        // Login method that sends user data to the backend to authenticate using Firebase authentication
         async loginUser() {
             try {
                 const response = await fetch("http://localhost:5000/api/auth/login", {
@@ -166,20 +219,26 @@ let mediaForum = new Vue({
                     this.idToken = data.idToken;
                     localStorage.setItem("idToken", data.idToken);
 
+                    // Update the user object based on the login result
                     this.user.uid = data.localId;
                     this.user.email = data.email;
                     this.user.displayName = data.displayName || "";
                     this.user.username = data.displayName && data.displayName.trim() !== ""
                         ? data.displayName
                         : this.loginEmail;
-
+                    // Saves the uid in localStorage as well
                     localStorage.setItem("userUid", data.localId);
 
+                    // Update the header username
                     this.username = this.user.displayName || this.user.username || this.loginEmail;
 
+                    // Load full profile details from Firestore
                     await this.getUserProfile();
 
+                    // Navigate to the profile page
                     this.showPage("home");
+                    this.loginEmail = '';
+                    this.loginPassword = '';
                 } else {
                     console.error("Error during login.");
                     this.isAuthenticated = false;
@@ -189,6 +248,8 @@ let mediaForum = new Vue({
                 this.isAuthenticated = false;
             }
         },
+
+        // Check authentication state by sending the token to a backend /authState endpoint
         async checkAuthState() {
             const token = localStorage.getItem("idToken");
             if (token) {
@@ -216,6 +277,7 @@ let mediaForum = new Vue({
                 this.isAuthenticated = false;
             }
         },
+        // Logout method
         logoutUser() {
             localStorage.removeItem("idToken");
             this.isAuthenticated = false;
@@ -223,6 +285,9 @@ let mediaForum = new Vue({
             this.showPage("authentication");
             console.log("User logged out successfully.");
         },
+
+
+        // Fetch media items from the backend based on search query
         async searchMedia() {
             if (this.searchQuery.trim().length > 0) {
                 try {
@@ -241,24 +306,29 @@ let mediaForum = new Vue({
                     console.error("Error during search:", err);
                 }
             } else {
+                // Clear results if the search box is empty
                 this.searchResults = [];
                 this.visibleResults = [];
                 this.showViewMore = false;
             }
         },
+        // Display the initial subset of results
         updateVisibleResults() {
             this.visibleResults = this.searchResults.slice(0, this.maxResultsToShow);
         },
+        // Load additional results (next set of 5)
         loadMoreResults() {
             const currentCount = this.visibleResults.length;
             const additionalResults = this.searchResults.slice(currentCount, currentCount + this.maxResultsToShow);
             this.visibleResults = [...this.visibleResults, ...additionalResults];
             this.showViewMore = this.visibleResults.length < this.searchResults.length;
         },
+        // Extract the year from a date string (e.g., "2023-10-01" to "2023")
         extractYear(dateString) {
             if (!dateString) return '';
             return dateString.split('-')[0];
         },
+        // Fetch full media details based on the media ID
         async fetchUserMediaEntry(mediaId) {
             if (!this.isAuthenticated) {
                 this.inList = false;
@@ -294,6 +364,8 @@ let mediaForum = new Vue({
                 console.error("Exception in fetchUserMediaEntry:", error);
             }
         },
+
+        // When the media is NOT in the user's list, add it.
         async addMediaToList(mediaId) {
             try {
                 const response = await fetch('/api/medialist/toggle', {
@@ -310,6 +382,7 @@ let mediaForum = new Vue({
                 if (response.ok) {
                     const data = await response.json();
                     if (data.added) {
+                        // After adding, update state and open extra actions.
                         await this.fetchUserMediaEntry(mediaId);
                         this.showExtraActions = true;
                     }
@@ -320,9 +393,11 @@ let mediaForum = new Vue({
                 console.error("Exception in addMediaToList:", error);
             }
         },
+        // Toggle the display of extra actions if the media is in the list.
         toggleExtraActions() {
             this.showExtraActions = !this.showExtraActions;
         },
+        // Remove the media from the user's list.
         async removeMediaFromList(mediaId) {
             try {
                 const response = await fetch('/api/medialist/toggle', {
@@ -338,18 +413,19 @@ let mediaForum = new Vue({
                 });
                 if (response.ok) {
                     const data = await response.json();
+                    // The toggle endpoint returns data.added === false if the item was removed.
                     if (!data.added) {
-                        await this.fetchUserMediaEntry(mediaId);
+                        await this.fetchUserMediaEntry(mediaId); // This will update inList to false.
                         this.showExtraActions = false;
-                        console.log("Media removed from list.");
                     }
                 } else {
-                    console.error("Remove error:", await response.text());
+                    console.error("error:", await response.text());
                 }
             } catch (error) {
                 console.error("Exception in removeMediaFromList:", error);
             }
         },
+        // Update the score and favourite status for the media entry.
         async updateMediaEntry() {
             try {
                 const response = await fetch('/api/medialist/update', {
@@ -368,9 +444,9 @@ let mediaForum = new Vue({
                 if (response.ok) {
                     const data = await response.json();
                     if (data.success) {
-                        console.log("Media entry updated successfully.");
-
+                        // Update the user's media entry data
                         await this.fetchUserMediaEntry(this.media.media_id);
+                        // Refresh the aggregated media details using the MongoDB _id
                         await this.refreshMediaDetails(this.media._id);
                     } else {
                         console.error("Failed to update media entry.");
@@ -382,6 +458,7 @@ let mediaForum = new Vue({
                 console.error("Exception in updateMediaEntry:", error);
             }
         },
+        // Refresh aggregated media details based on the backend's mediaTitles collection.
         async refreshMediaDetails(mediaObjectId) {
             try {
                 const response = await fetch(`/api/media/details/${mediaObjectId}`, {
@@ -389,7 +466,7 @@ let mediaForum = new Vue({
                 });
                 if (response.ok) {
                     const updatedMedia = await response.json();
-
+                    // Update the aggregated fields
                     this.media.score = updatedMedia.score;
                     this.media.scored_by = updatedMedia.scored_by;
                     this.media.members = updatedMedia.members;
@@ -401,6 +478,7 @@ let mediaForum = new Vue({
                 console.error("Error in refreshMediaDetails:", error);
             }
         },
+        // When viewing media details, load the media and then check its status in the user's list.
         async viewMediaInfo(id) {
             try {
                 const response = await fetch(`/api/media/details/${id}`);
@@ -410,6 +488,7 @@ let mediaForum = new Vue({
                     this.showPage('mediaInfo');
                     this.searchQuery = '';
 
+                    // After media details have loaded, check if the media is already in the user's list.
                     if (this.isAuthenticated) {
                         await this.fetchUserMediaEntry(this.media.media_id);
                     }
@@ -420,6 +499,9 @@ let mediaForum = new Vue({
                 console.error("Error fetching media details:", err);
             }
         },
+
+
+        // Fetch the user's profile from the backend using the uid and token
         async getUserProfile() {
             let uid = this.user.uid;
             if (!uid) {
@@ -430,7 +512,7 @@ let mediaForum = new Vue({
             }
 
             const token = localStorage.getItem("idToken");
-            if (!token || !uid) return;
+            if (!token || !uid) return; // If we don't have token or uid, do not proceed.
 
             try {
                 const response = await fetch(`http://localhost:5000/api/users/${uid}`, {
@@ -442,6 +524,7 @@ let mediaForum = new Vue({
                 });
                 if (response.ok) {
                     const profileData = await response.json();
+                    // Update the user object with the fetched data
                     this.user = { ...this.user, ...profileData };
                 } else {
                     console.error("Failed to load user profile data.");
@@ -450,14 +533,17 @@ let mediaForum = new Vue({
                 console.error("Error loading user profile:", error.message);
             }
         },
+        // Toggle between view and edit mode
         toggleEditMode() {
             if (!this.editMode) {
+                // When entering edit mode, copy the existing bio into editedBio
                 this.editedBio = this.user.bio || "";
                 this.editMode = true;
             } else {
                 this.updateProfile();
             }
         },
+        // Update the user profile fields
         async updateProfile() {
             const token = localStorage.getItem("idToken");
             if (!token || !this.user.uid) return;
@@ -475,15 +561,16 @@ let mediaForum = new Vue({
                     const updatedProfile = await response.json();
                     this.user = { ...this.user, ...updatedProfile };
                     this.username = this.user.displayName || this.user.username || "Guest";
-                    console.log("Profile updated successfully.");
                 } else {
                     console.error("Failed to update profile.");
                 }
             } catch (error) {
                 console.error("Error updating profile:", error.message);
             }
+            // Exit edit mode after saving.
             this.editMode = false;
         },
+        // Called when the file input changes
         async handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -491,6 +578,7 @@ let mediaForum = new Vue({
             const token = localStorage.getItem("idToken");
             if (!uid || !token) return;
 
+            // Create a FormData object and append the file
             const formData = new FormData();
             formData.append("profilePicture", file);
 
@@ -504,6 +592,7 @@ let mediaForum = new Vue({
                 });
                 if (response.ok) {
                     const result = await response.json();
+                    // Update the user object’s profile picture
                     this.user.profile_picture = result.profile_picture;
                     console.log("Profile picture updated:", result.profile_picture);
                 } else {
@@ -513,17 +602,246 @@ let mediaForum = new Vue({
                 console.error("Error uploading file:", error.message);
             }
         },
-    },
-    created() {
-        this.checkAuthState();
 
+
+        // Toggle the display of the create forum form
+        toggleCreateForumForm() {
+            this.showCreateForumForm = !this.showCreateForumForm;
+            if (!this.showCreateForumForm) {
+                // Reset form when hiding the form.
+                this.newForum.category = "";
+                this.newForum.name = "";
+                this.newForum.description = "";
+            }
+        },
+        // Fetch existing forums from the backend
+        async fetchForums() {
+            try {
+                const response = await fetch("/api/forums");
+                if (response.ok) {
+                    this.loadedForums = await response.json();
+                } else {
+                    console.error("Error fetching forums:", await response.text());
+                }
+            } catch (error) {
+                console.error("Exception fetching forums:", error);
+            }
+        },
+        // Returns forums filtered by a given category.
+        forumsByCategory(category) {
+            return this.loadedForums.filter(forum => forum.category === category);
+        },
+        // Create a new forum by sending form data to the backend
+        async createForum() {
+            if (!this.newForum.name.trim() || !this.newForum.description.trim()) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+            try {
+                const response = await fetch("/api/forums/create", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        name: this.newForum.name,
+                        description: this.newForum.description,
+                        category: this.newForum.category,
+                        role: this.user.website_role
+                    })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("Forum created:", data.forum);
+                    // Refresh the forums list.
+                    await this.fetchForums();
+                    this.toggleCreateForumForm();
+                } else {
+                    console.error("Error creating forum:", await response.text());
+                }
+            } catch (error) {
+                console.error("Exception while creating forum:", error);
+            }
+        },
+        formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(date);
+        },
+
+        // Select a forum to view its topics
+        selectForum(forum) {
+            this.selectedForumName = forum.name;
+            this.selectedForumId = forum.forum_id || forum._id;
+            this.currentPage = 'forum-topics';
+        },
+        // Toggle the display of the create topic form
+        toggleCreateTopicForm() {
+            this.showCreateTopicForm = !this.showCreateTopicForm;
+            if (!this.showCreateTopicForm) {
+                // Clear form when closing
+                this.newTopic.title = '';
+                this.newTopic.content = '';
+            }
+            this.fetchForums();
+        },
+        // Create a new topic by sending form data to the backend
+        async createTopic() {
+            if (!this.newTopic.title.trim() || !this.newTopic.content.trim()) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            try {
+                const response = await fetch('/api/topics/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        forum_id: this.selectedForumId,
+                        title: this.newTopic.title,
+                        content: this.newTopic.content,
+                        author_uid: this.user.uid
+                    })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    this.topics.push({
+                        ...data.topic,
+                        author_displayName: this.user.username
+                    });
+                    this.toggleCreateTopicForm();
+                } else {
+                    const errText = await response.text();
+                    console.error('Error creating topic:', errText);
+                }
+            } catch (error) {
+                console.error('Exception in createTopic:', error);
+            }
+        },
+        // Fetch the display name of a user from Firestore using the given UID
+        async getUserDisplayNameFromFirestore(uid) {
+            try {
+                const doc = await firebase.firestore().collection("users").doc(uid).get();
+                if (doc.exists) {
+                    return doc.data().displayName || uid;
+                } else {
+                    return uid;
+                }
+            } catch (error) {
+                console.error("Error fetching display name for UID", uid, error);
+                return uid;
+            }
+        },
+        // Fetch display names for all authors in the topics array via UID
+        async fetchUserDisplayNames() {
+            const uniqueUIDs = new Set();
+            this.topics.forEach(topic => uniqueUIDs.add(topic.author_uid));
+            for (const uid of uniqueUIDs) {
+                // Only fetch if not already in the cache
+                if (!this.userDisplayNames[uid]) {
+                    const displayName = await this.getUserDisplayNameFromFirestore(uid);
+                    this.$set(this.userDisplayNames, uid, displayName);
+                }
+            }
+        },
+        // Fetch topics for the selected forum
+        async fetchTopics() {
+            try {
+                const response = await fetch(`/api/topics/${this.selectedForumId}`);
+                if (response.ok) {
+                    const res = await response.json();
+                    this.topics = res;
+                } else {
+                    console.error("Error fetching topics:", await response.text());
+                }
+            } catch (error) {
+                console.error("Exception fetching topics:", error);
+            }
+        },
+
+
+        // Select a topic to view its posts/discussion
+        selectTopic(topic) {
+            // Set selected topic data
+            this.selectedTopicId = topic.topic_id;
+            this.selectedTopicTitle = topic.title;
+            this.selectedTopicAuthor = topic.author_uid;
+            this.selectedTopicAuthorDisplay = topic.author_displayName || topic.author_uid;
+            this.selectedTopicContent = topic.content;
+            this.selectedTopicPostsCount = topic.posts_count;
+            this.selectedTopicViews = topic.views;
+
+            // Clear posts and navigate to topic-posts page
+            this.posts = [];
+            this.currentPage = 'topic-posts';
+        },
+        // Fetch posts for the selected topic
+        async fetchPosts() {
+            try {
+                const response = await fetch(`/api/posts/${this.selectedTopicId}`);
+                if (response.ok) {
+                    const res = await response.json();
+                    this.posts = res;
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error fetching posts:", errorText);
+                }
+            } catch (error) {
+                console.error("Exception fetching posts:", error);
+            }
+        },
+        // Create a new post in the selected topic
+        async createPost() {
+            if (!this.newPost.content.trim()) {
+                alert("Please write some content for your reply.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/posts/create", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        topic_id: this.selectedTopicId,
+                        author_uid: this.user.uid,
+                        content: this.newPost.content
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    this.posts.push(data.post);
+
+                    this.fetchPosts();
+                    this.newPost.content = "";
+                    this.showCreatePostForm = false;
+                } else {
+                    console.error("Error creating post:", await response.text());
+                    alert("Error creating post.");
+                }
+            } catch (error) {
+                console.error("Exception in createPost:", error);
+                alert("Error creating post.");
+            }
+        },
+        // Toggle the display of the create post form
+        toggleCreatePostForm() {
+            this.showCreatePostForm = !this.showCreatePostForm;
+            if (!this.showCreatePostForm) {
+                this.newPost.content = "";
+            }
+        },
+
+    },
+    // Lifecycle hooks
+    created() {
+        // Check auth state
+        this.checkAuthState();
+        this.fetchForums();
+
+        // If there is an idToken and userUid in localStorage, restore them
         const storedToken = localStorage.getItem("idToken");
         const storedUid = localStorage.getItem("userUid");
         if (storedToken && storedUid) {
             this.idToken = storedToken;
             this.user.uid = storedUid;
             this.isAuthenticated = true;
-
             this.getUserProfile();
         }
     }

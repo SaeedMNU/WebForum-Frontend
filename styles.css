@@ -96,8 +96,8 @@ body {
 
 
 
-/* Home Page Styling */
 
+/* Home Page Styling */
 .home-page {
     display: flex;
     align-items: flex-start;
@@ -147,7 +147,6 @@ body {
 
 
 
-
 /* Browse Media Page Styling */
 .browse-page {
     display: flex;
@@ -158,12 +157,9 @@ body {
 
 .browse-page .left-wrapper {
     width: 70%;
-    /* Allocates all right-side content to 30% of the page width */
     display: flex;
     flex-direction: column;
-    /* Stacks right-side containers vertically */
     gap: 10px;
-    /* Adds space between stacked containers */
 }
 
 .browse-page .left-container {
@@ -177,12 +173,9 @@ body {
 
 .browse-page .right-wrapper {
     width: 30%;
-    /* Allocates all right-side content to 30% of the page width */
     display: flex;
     flex-direction: column;
-    /* Stacks right-side containers vertically */
     gap: 10px;
-    /* Adds space between stacked containers */
 }
 
 .browse-page .right-container {
@@ -195,21 +188,22 @@ body {
 
 .browse-page .search-bar {
     flex: 1;
+    width: 35%;
     margin-right: 10px;
     padding: 7px;
     font-size: 1em;
     border-radius: 5px;
-    border: none;
-    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid red;
+    background: transparent;
+    color: white;
+    box-sizing: border-box;
 }
 
-.browse-page .search-bar:focus {
-    outline: none;
-    background-color: rgba(255, 255, 255, 1);
+.browse-page .search-bar::placeholder {
+    color: rgba(255, 255, 255, 0.8);
 }
 
-/* Search Results Container */
-.search-results-container {
+.browse-page .search-results-container {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -220,8 +214,7 @@ body {
     margin-right: 10px;
 }
 
-/* Each Search Result Box */
-.search-results-container .search-result-box {
+.browse-page .search-results-container .search-result-box {
     display: flex;
     align-items: center;
     gap: 15px;
@@ -231,19 +224,19 @@ body {
     color: white;
 }
 
-.search-results-container .result-poster {
+.browse-page .search-results-container .result-poster {
     width: 60px;
     height: 90px;
     border-radius: 5px;
     object-fit: cover;
 }
 
-.search-results-container .result-details {
+.browse-page .search-results-container .result-details {
     display: flex;
     flex-direction: column;
 }
 
-.search-results-container .result-title {
+.browse-page .search-results-container .result-title {
     font-size: 1em;
     color: red;
     text-decoration: none;
@@ -251,46 +244,40 @@ body {
     cursor: pointer;
 }
 
-.search-results-container .result-title:hover {
+.browse-page .search-results-container .result-title:hover {
     text-decoration: underline;
 }
 
-.search-results-container .result-type {
+.browse-page .search-results-container .result-type {
     font-size: 0.9em;
     color: rgba(255, 255, 255, 0.8);
     margin-top: 5px;
 }
 
-.search-results-container .result-synopsis {
+.browse-page .search-results-container .result-synopsis {
     font-size: 0.8em;
     color: rgba(255, 255, 255, 0.6);
     margin-top: 5px;
     font-style: italic;
 }
 
-.search-results-container .no-results-message {
-    text-align: center;
-    font-size: 16px;
-    color: #888;
-    margin-top: 20px;
-}
-
-
-/* View More Button */
-.search-results-container .view-more-button {
+.browse-page .search-results-container .view-more-button {
     margin-top: 10px;
     padding: 10px;
-    background: red;
-    color: white;
-    border: none;
+    color: red;
+    background: transparent;
+    text-decoration: none;
+    font-weight: bold;
+    border: 2px solid red;
     border-radius: 5px;
     cursor: pointer;
     font-weight: bold;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.search-results-container .view-more-button:hover {
-    background: white;
-    color: red;
+.browse-page .search-results-container .view-more-button:hover {
+    background-color: red;
+    color: white;
 }
 
 
@@ -384,35 +371,27 @@ body {
 
 .media-info-page .poster-wrapper {
     width: 20%;
-    /* Matches the image width */
 }
 
 .media-info-page .poster-wrapper img {
     width: 100%;
-    /* Image scales to the wrapper size */
     height: auto;
-    /* Maintains natural aspect ratio */
     border-radius: 10px;
 }
 
 .media-info-page .titles-wrapper {
     margin-top: 10px;
-    /* Adds space below the poster */
     font-size: 0.9em;
-    /* Slightly smaller font for subtitles */
     color: white;
-    /* Matches the dark theme */
     line-height: 1.4;
 }
 
 .media-info-page .titles-wrapper p {
     margin: 5px 0;
-    /* Adds spacing between title lines */
 }
 
 .media-info-page .titles-wrapper strong {
     color: red;
-    /* Highlights the field labels */
 }
 
 .media-info-page .right-details {
@@ -456,13 +435,11 @@ body {
     line-height: 1.5;
 }
 
-/* Media List Control Styling */
 .media-info-page .media-list-control {
     margin-top: 15px;
     text-align: center;
 }
 
-/* Revert styling for the main media list control button */
 .media-info-page .media-list-control>button {
     background: transparent;
     border: 2px solid red;
@@ -480,20 +457,16 @@ body {
     color: white;
 }
 
-
-/* Extra Actions Container */
 .media-info-page .media-list-actions {
     margin-top: 10px;
     padding: 15px;
     background: rgba(255, 255, 255, 0.1);
-    /* subtly different background */
     border: 2px solid red;
     border-radius: 10px;
 }
 
 .media-info-page .media-list-actions button {
     background: red;
-    /* Default now has a red background */
     border: 2px solid red;
     padding: 8px 12px;
     color: white;
@@ -510,7 +483,6 @@ body {
     color: red;
 }
 
-/* Score Section */
 .media-info-page .media-list-actions .score-section {
     margin-bottom: 10px;
 }
@@ -531,7 +503,6 @@ body {
     color: white;
 }
 
-/* Favourite Section */
 .media-info-page .media-list-actions .favourite-section {
     margin-bottom: 10px;
 }
@@ -557,6 +528,655 @@ body {
     background-color: transparent;
     color: red;
 }
+
+
+
+
+
+/* Forum Page Styling */
+.forum-page {
+    display: flex;
+    align-items: flex-start;
+    margin: 20px;
+    padding: 10px;
+}
+
+.forum-page .left-wrapper {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.forum-page .left-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    margin-right: 10px;
+    padding-inline: 20px;
+    padding-bottom: 20px;
+}
+
+.forum-page .right-wrapper {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.forum-page .right-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding-inline: 20px;
+    padding-bottom: 20px;
+}
+
+.forum-page .search-bar {
+    flex: 1;
+    width: 100%;
+    margin-right: 10px;
+    padding: 7px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid red;
+    background: transparent;
+    color: white;
+    box-sizing: border-box;
+}
+
+.forum-page .search-bar::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.forum-page .search-results-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding: 15px;
+    margin-right: 10px;
+}
+
+.forum-page .search-results-container .search-result-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+}
+
+.forum-page .search-results-container .result-title {
+    font-size: 1em;
+    color: red;
+    text-decoration: none;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.forum-page .search-results-container .result-title:hover {
+    text-decoration: underline;
+}
+
+.forum-page .search-results-container .result-author {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.forum-page .search-results-container .result-date {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 5px;
+}
+
+.forum-page .search-results-container .result-snippet {
+    font-size: 0.8em;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 5px;
+    font-style: italic;
+}
+
+.create-forum-area {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.create-forum-button {
+    background: transparent;
+    border: 2px solid red;
+    padding: 10px 15px;
+    color: red;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    outline: none;
+}
+
+.create-forum-button:hover {
+    background-color: red;
+    color: white;
+}
+
+.forum-create-form {
+    margin-top: 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid red;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.forum-input,
+.forum-textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid red;
+    background: transparent;
+    color: white;
+    box-sizing: border-box;
+}
+
+.forum-input::placeholder,
+.forum-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.submit-forum-btn,
+.cancel-forum-btn {
+    background: transparent;
+    border: 2px solid red;
+    padding: 8px 12px;
+    color: red;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.submit-forum-btn:hover,
+.cancel-forum-btn:hover {
+    background-color: red;
+    color: white;
+}
+
+.forum-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.forum-box {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid red;
+    border-radius: 8px;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    box-sizing: border-box;
+    font-size: 0.9em;
+}
+
+.forum-info {
+    width: 80%;
+    padding-right: 5px;
+    box-sizing: border-box;
+}
+
+.forum-name {
+    font-weight: bold;
+    color: red;
+    margin: 0;
+    font-size: 1em;
+}
+
+.forum-description {
+    color: white;
+    margin: 0;
+    font-size: 0.9em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.forum-meta {
+    width: 20%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    text-align: left;
+    box-sizing: border-box;
+}
+
+.forum-meta p {
+    margin: 0;
+    font-size: 0.8em;
+    line-height: 1.1;
+}
+
+.forum-page .label {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: normal;
+}
+
+
+
+
+
+
+/* Forum Topics Page Styling */
+.forum-topics-page .heading-wrapper p {
+    margin: 0;
+    margin-bottom: 10px;
+    padding: 0;
+    padding-bottom: 11px;
+}
+
+.forum-topics-page {
+    display: flex;
+    align-items: flex-start;
+    margin: 20px;
+    padding: 10px;
+}
+
+.forum-topics-page .left-wrapper {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.forum-topics-page .left-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    margin-right: 10px;
+    padding: 20px;
+    padding-inline: 20px;
+    padding-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.forum-topics-page .right-wrapper {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.forum-topics-page .right-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding: 20px;
+    padding-inline: 20px;
+    padding-bottom: 20px;
+    box-sizing: border-box;
+}
+
+.forum-topics-page .search-bar {
+    flex: 1;
+    width: 35%;
+    margin-right: 10px;
+    padding: 7px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: 1px solid red;
+    background: transparent;
+    color: white;
+    box-sizing: border-box;
+}
+
+.forum-topics-page .search-bar::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.forum-topics-page .topics-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.forum-topics-page .topic-box {
+    display: flex;
+    flex-direction: row;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid red;
+    border-radius: 8px;
+    padding: 10px;
+    color: white;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+.forum-topics-page .topic-main {
+    width: 80%;
+    padding-right: 5px;
+}
+
+.forum-topics-page .topic-main .topic-title {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: red;
+    margin: 0;
+}
+
+.forum-topics-page .topic-main .topic-author {
+    font-size: 0.9em;
+    color: white;
+    margin: 5px 0 0 0;
+}
+
+.forum-topics-page .topic-stats {
+    width: 10%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    font-size: 0.8em;
+}
+
+.forum-topics-page .topic-stats p {
+    margin: 0;
+}
+
+.forum-topics-page .topic-timestamps {
+    width: 10%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    font-size: 0.8em;
+}
+
+.forum-topics-page .topic-timestamps p {
+    margin: 0;
+}
+
+.forum-topics-page .label {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: normal;
+}
+
+.forum-topics-page .create-topic-area {
+    text-align: center;
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 5px solid rgba(0, 0, 0, 0.7);
+    border-radius: 15px;
+    box-sizing: border-box;
+}
+
+.create-topic-button {
+    background: transparent;
+    border: 2px solid red;
+    padding: 10px 15px;
+    color: red;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    outline: none;
+}
+
+.create-topic-button:hover {
+    background-color: red;
+    color: white;
+}
+
+.topic-create-form {
+    margin-top: 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid red;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.topic-input,
+.topic-textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid red;
+    background: transparent;
+    color: white;
+    box-sizing: border-box;
+}
+
+.topic-input::placeholder,
+.topic-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.submit-topic-btn,
+.cancel-topic-btn {
+    background: transparent;
+    border: 2px solid red;
+    padding: 8px 12px;
+    color: red;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.submit-topic-btn:hover,
+.cancel-topic-btn:hover {
+    background-color: red;
+    color: white;
+}
+
+
+
+
+
+
+
+/* Topic-Posts Page Styling */
+.topic-posts-page {
+    display: flex;
+    align-items: flex-start;
+    margin: 20px;
+    padding: 10px;
+}
+
+.topic-posts-page .left-wrapper {
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.topic-posts-page .left-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    margin-right: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.topic-posts-page .right-wrapper {
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.topic-posts-page .right-container {
+    background: rgba(0, 0, 0, 0.8);
+    border: 5px solid rgba(0, 0, 0, 0.8);
+    border-radius: 15px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.topic-posts-page .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.topic-posts-page .post-main {
+    width: 70%;
+    padding-right: 10px;
+}
+
+.topic-posts-page .post-stats {
+    width: 20%;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 0.8em;
+    gap: 2px;
+}
+
+.topic-posts-page .label {
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: normal;
+}
+
+.topic-posts-page .create-post-area {
+    text-align: center;
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.7);
+    border: 5px solid rgba(0, 0, 0, 0.7);
+    border-radius: 15px;
+    box-sizing: border-box;
+}
+
+.topic-posts-page .create-post-button {
+    background: transparent;
+    border: 2px solid red;
+    padding: 10px 15px;
+    color: red;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    outline: none;
+}
+
+.topic-posts-page .create-post-button:hover {
+    background-color: red;
+    color: white;
+}
+
+.topic-posts-page .post-create-form {
+    margin-top: 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid red;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.topic-posts-page .post-textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid red;
+    background: transparent;
+    color: white;
+    box-sizing: border-box;
+}
+
+.topic-posts-page .post-textarea::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.submit-post-btn,
+.cancel-post-btn {
+    background: transparent;
+    border: 2px solid red;
+    padding: 8px 12px;
+    color: red;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.submit-post-btn:hover,
+.cancel-post-btn:hover {
+    background-color: red;
+    color: white;
+}
+
+.topic-posts-page .topic-title {
+    color: red;
+}
+
+.topic-posts-page .topic-content {
+    font-size: 1em;
+    ;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.topic-posts-page .topic-author {
+    text-align: end;
+    color: red;
+}
+
+.topic-posts-page .post-box {
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding-inline: 10px;
+    color: white;
+    box-sizing: border-box;
+}
+
+.topic-posts-page .post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topic-posts-page .post-author .author-name {
+    font-weight: bold;
+    font-size: 1.2em;
+    color: red;
+    padding-inline: 10px;
+}
+
+.topic-posts-page .post-created {
+    font-size: 0.9em;
+    padding-inline: 10px;
+}
+
+.topic-posts-page .post-content {
+    font-size: 0.9em;
+    padding-inline: 10px;
+}
+
+
+
 
 
 
@@ -671,7 +1291,6 @@ body {
     padding: 20px;
 }
 
-/* Profile Header */
 .profile-header {
     display: flex;
     align-items: center;
@@ -710,7 +1329,6 @@ body {
     color: white;
 }
 
-/* Profile Bio Section */
 .profile-bio {
     margin-top: 15px;
 }
@@ -731,7 +1349,6 @@ body {
     margin-top: 10px;
 }
 
-/* Profile Button Container */
 .profile-button-container {
     width: 100%;
     max-width: 800px;
@@ -740,7 +1357,6 @@ body {
     margin-top: 10px;
 }
 
-/* Edit/Save Button Styling */
 .profile-edit-button {
     background: red;
     color: white;

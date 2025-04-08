@@ -11,9 +11,11 @@
 
 <body>
     <div id="app">
+        <!-- Header Section with Logo and Navigation Menu -->
         <header class="header-box">
-            <div class="header-logo" @click="showPage('home')">Page Name</div>
+            <div class="header-logo" @click="showPage('home')">MediaNow</div>
             <nav class="header-nav">
+                <!-- Navigation Menu with Dynamic Class Binding -->
                 <ul class="nav-list">
                     <li class="nav-item" @click.prevent="showPage('browse')">Browse Media</li>
                     <li class="nav-item" @click.prevent="showPage('forum')">Forum</li>
@@ -22,6 +24,7 @@
             </nav>
             <div class="header-user-info">
                 <span class="username">{{ username }}</span>
+                <!-- Dropdown Menu for Dynamic User Options -->
                 <div class="dropdown">
                     <button class="dropdown-button" @click="toggleDropdown">▼</button>
                     <ul class="dropdown-menu" v-if="dropdownOpen">
@@ -53,7 +56,6 @@
             </div>
         </div>
 
-
         <!-- Browse Media Page Content -->
         <div v-if="currentPage === 'browse'" class="browse-page">
             <div class="left-wrapper">
@@ -64,6 +66,7 @@
                     <input type="text" v-model="searchQuery" @input="searchMedia" placeholder="Search for media..."
                         class="search-bar">
                 </div>
+                <!-- Search Results Container -->
                 <div v-if="searchQuery.trim().length > 0 && visibleResults.length > 0" class="search-results-container">
                     <div v-for="(result, index) in visibleResults" :key="result.media_id" class="search-result-box">
                         <img @click.prevent="viewMediaInfo(result._id)" :src="result.main_picture" alt="Poster"
@@ -107,6 +110,7 @@
                     <div class="media-info-wrapper">
                         <div class="poster-wrapper">
                             <img :src="media.main_picture || 'default-image-url.jpg'" alt="Poster" class="media-poster">
+                            <!-- Dynamically loading title fields for given media -->
                             <div class="titles-wrapper">
                                 <template v-for="field in titlesFields">
                                     <p
@@ -118,6 +122,7 @@
                                 </template>
                             </div>
                         </div>
+                        <!-- Dynamically loading details fields for given media -->
                         <div class="right-details">
                             <template v-for="field in detailsFields">
                                 <p
@@ -128,28 +133,33 @@
                                 </p>
                             </template>
                         </div>
+                        <!-- Extra stats and website user statistics -->
                         <div class="extra-stats">
                             <p><strong>Score:</strong><br> {{ media.score || "--" }}</p>
                             <p><strong>Scored By:</strong><br> {{ media.scored_by || "--" }}</p>
                             <p><strong>Members:</strong><br> {{ media.members || "--" }}</p>
                             <p><strong>Favourited:</strong><br> {{ media.favourites || "--" }}</p>
 
-                            <h3>My List Entry:</h3>
-
+                            <!-- User's specific list entry stats -->
                             <div class="media-list-control" v-if="isAuthenticated">
+                                <h3>My List Entry:</h3>
                                 <button @click="inList ? toggleExtraActions() : addMediaToList(media.media_id)">
                                     {{ inList ? "EDIT - " : "ADD - " }}{{ media.title }}
                                 </button>
 
+                                <!-- Show extra actions if the media is in the user's list -->
                                 <div v-if="inList && showExtraActions" class="media-list-actions">
+                                    <!-- Button to remove the media from the user's list -->
                                     <button @click="removeMediaFromList(media.media_id)">Remove {{ media.title
                                         }}</button>
 
+                                    <!-- Score input: -->
                                     <div class="score-section">
                                         <label>Score (1-10):</label>
                                         <input type="number" v-model.number="userScore" min="1" max="10" step="1">
                                     </div>
 
+                                    <!-- Favourite toggle -->
                                     <div class="favourite-section">
                                         <label>
                                             <input type="checkbox" v-model="userFavourited">
@@ -157,13 +167,11 @@
                                         </label>
                                     </div>
 
+                                    <!-- Button to update the media entry -->
                                     <button @click="updateMediaEntry()">Update Changes</button>
                                 </div>
                             </div>
-
-
                         </div>
-
                     </div>
 
                     <h2>Synopsis</h2>
@@ -182,9 +190,193 @@
             </div>
         </div>
 
+        <!-- Forum Page Content -->
+        <div v-if="currentPage === 'forum'" class="forum-page">
+            <div class="left-wrapper">
+
+                <!-- Dynamically load forums from database in an organised manner -->
+                <div class="left-container" v-for="category in forumCategories" :key="category">
+                    <div class="heading-wrapper">
+                        <p>{{ category }} Forums</p>
+                    </div>
+                    <div class="forum-list">
+                        <div class="forum-box" v-for="forum in forumsByCategory(category)" :key="forum._id"
+                            @click="selectForum(forum)">
+                            <div class="forum-info">
+                                <p class="forum-name">{{ forum.name }}</p>
+                                <p class="forum-description">{{ forum.description }}</p>
+                            </div>
+                            <div class="forum-meta">
+                                <p><span class="label">Topics: </span>{{ forum.topics_count }}</p>
+                                <p><span class="label">Posts: </span>{{ forum.posts_count }}</p>
+                                <p><span class="label">Created on: </span>{{ formatDate(forum.created_at) }}</p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Create New Forum Button & Form -->
+                <div v-if="user.website_role === 'administrator' && isAuthenticated"
+                    class="left-container create-forum-area">
+                    <br>
+                    <button @click="toggleCreateForumForm" class="create-forum-button">
+                        Create Forum
+                    </button>
+
+                    <div v-if="showCreateForumForm" class="forum-create-form">
+                        <input type="text" v-model="newForum.category" placeholder="Category" class="forum-input">
+                        <input type="text" v-model="newForum.name" placeholder="Forum Name" class="forum-input">
+                        <textarea v-model="newForum.description" placeholder="Forum Description"
+                            class="forum-textarea"></textarea>
+                        <button @click="createForum" class="submit-forum-btn">Submit</button>
+                        <button @click="toggleCreateForumForm" class="cancel-forum-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            <div class="right-wrapper">
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Forum Navigation</p>
+                    </div>
+                    <input type="text" placeholder="Search the forums..." class="search-bar">
+                </div>
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Community</p>
+                    </div>
+                </div>
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Statistics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forum Topics Page Content -->
+        <div v-if="currentPage === 'forum-topics'" class="forum-topics-page">
+            <div class="left-wrapper">
+                <!-- Header/Title & Search Bar -->
+                <div class="left-container">
+                    <div class="heading-wrapper">
+                        <p>Topics in {{ selectedForumName }}</p>
+                    </div>
+                    <input type="text" placeholder="Search topics..." class="search-bar">
+                </div>
+
+                <!-- Topics Listing Container -->
+                <div class="left-container topics-container">
+                    <div class="topics-list">
+                        <div class="topic-box" v-for="topic in topics" :key="topic.topic_id"
+                            @click="selectTopic(topic)">
+                            <div class="topic-main">
+                                <p class="topic-title">{{ topic.title }}</p>
+                                <br>
+                                <p class="topic-author"><span class="label">By: </span>{{ topic.author_displayName ||
+                                    topic.author_uid }}</p>
+                            </div>
+                            <div class="topic-stats">
+                                <p><span class="label">Posts: </span>{{ topic.posts_count }}</p>
+                                <p><span class="label">Views: </span>{{ topic.views }}</p>
+                            </div>
+                            <div class="topic-timestamps">
+                                <p><span class="label">Created: </span>{{ formatDate(topic.created_at) }}</p>
+                                <p><span class="label">Updated: </span>{{ formatDate(topic.updated_at) }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Create New Topic Button & Form -->
+                <div v-if="isAuthenticated" class="left-container create-topic-area">
+                    <button @click="toggleCreateTopicForm" class="create-topic-button">
+                        Create New Topic
+                    </button>
+                    <div v-if="showCreateTopicForm" class="topic-create-form">
+                        <input type="text" v-model="newTopic.title" placeholder="Topic Title" class="topic-input">
+                        <textarea v-model="newTopic.content" placeholder="Topic Content"
+                            class="topic-textarea"></textarea>
+                        <button @click="createTopic" class="submit-topic-btn">Submit</button>
+                        <button @click="toggleCreateTopicForm" class="cancel-topic-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-wrapper">
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Community</p>
+                    </div>
+                </div>
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Statistics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Topic-Posts Page Content -->
+        <div v-if="currentPage === 'topic-posts'" class="topic-posts-page">
+            <div class="left-wrapper">
+                <div class="left-container">
+                    <div class="heading-wrapper">
+                        <p class="topic-title"><span class="value">{{ selectedTopicTitle }}</span></p>
+                    </div>
+                    <p class="topic-content">
+                        <span class="label">Topic Content: </span><br>
+                        <span class="value">{{ selectedTopicContent }}</span>
+                    </p>
+                    <p class="topic-author"><span class="label">By: </span>{{ selectedTopicAuthorDisplay ||
+                        selectedTopicAuthor }}</p>
+                </div>
+
+                <!-- Posts Listing Area -->
+                <div class="left-container posts-container">
+                    <div class="posts-list">
+                        <div class="post-box" v-for="post in posts" :key="post.post_id">
+                            <div class="post-header">
+                                <p class="post-author"><span class="value author-name">{{ post.author_displayName ||
+                                        post.author_uid }}</span></p>
+                                <p class="post-created"><span class="label">{{ formatDate(post.created_at) }}</span></p>
+                            </div>
+                            <div class="post-content">
+                                <p><span class="value">{{ post.content }}</span></p>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Create New Post / Reply Form -->
+                <div v-if="isAuthenticated" class="left-container create-post-area">
+                    <button @click="toggleCreatePostForm" class="create-post-button">Reply</button>
+                    <div v-if="showCreatePostForm" class="post-create-form">
+                        <textarea v-model="newPost.content" placeholder="Write your reply..."
+                            class="post-textarea"></textarea>
+                        <button @click="createPost" class="submit-post-btn">Submit</button>
+                        <button @click="toggleCreatePostForm" class="cancel-post-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right-wrapper">
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Community</p>
+                    </div>
+                </div>
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Statistics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Authentication Page -->
         <div v-if="currentPage === 'authentication'" class="authentication-page">
-            <!-- Auth Container for Login -->
+            <!-- Auth Container for Login form -->
             <div v-if="isLoginFormVisible" class="auth-container">
                 <h2 class="auth-heading">Login</h2>
                 <form class="auth-form" @submit.prevent="loginUser">
@@ -204,7 +396,7 @@
             </div>
 
 
-            <!-- Auth Container for Registration -->
+            <!-- Auth Container for Registration form -->
             <div v-else class="auth-container">
                 <h2 class="auth-heading">Register</h2>
                 <form class="auth-form"
@@ -234,7 +426,6 @@
             </div>
         </div>
 
-
         <!-- Profile Page Content -->
         <div v-if="currentPage === 'profile'" class="profile-page">
             <div class="profile-container">
@@ -259,6 +450,7 @@
                 <!-- Profile Bio/Other Section -->
                 <div class="profile-bio">
                     <div v-if="editMode">
+                        <!-- In edit mode, show a textarea -->
                         <textarea v-model="editedBio" class="profile-bio-input"
                             placeholder="Enter your bio..."></textarea>
                     </div>
@@ -267,7 +459,6 @@
                     </div>
 
                 </div>
-
             </div>
 
             <div class="profile-button-container" v-if="isAuthenticated">
@@ -276,8 +467,6 @@
                 </button>
             </div>
         </div>
-
-
 
     </div>
     <script src="vue-app.js"></script>
