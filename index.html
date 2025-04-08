@@ -267,7 +267,7 @@
 
                 <!-- Topics Listing Container -->
                 <div class="left-container topics-container">
-                    <div class="topics-list">
+                    <div v-if="topics.length > 0" class="topics-list">
                         <div class="topic-box" v-for="topic in topics" :key="topic.topic_id"
                             @click="selectTopic(topic)">
                             <div class="topic-main">
@@ -286,6 +286,9 @@
                             </div>
                         </div>
                     </div>
+                    <div v-else class="no-topics-placeholder">
+                        <p>No topics exist in this forum yet.</p>
+                    </div>
                 </div>
                 <!-- Create New Topic Button & Form -->
                 <div v-if="isAuthenticated" class="left-container create-topic-area">
@@ -303,6 +306,12 @@
             </div>
 
             <div class="right-wrapper">
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Forum Navigation</p>
+                    </div>
+                    <input type="text" placeholder="Search the forums..." class="search-bar">
+                </div>
                 <div class="right-container">
                     <div class="heading-wrapper">
                         <p>Community</p>
@@ -333,7 +342,7 @@
 
                 <!-- Posts Listing Area -->
                 <div class="left-container posts-container">
-                    <div class="posts-list">
+                    <div v-if="posts.length > 0" class="posts-list">
                         <div class="post-box" v-for="post in posts" :key="post.post_id">
                             <div class="post-header">
                                 <p class="post-author"><span class="value author-name">{{ post.author_displayName ||
@@ -344,7 +353,9 @@
                                 <p><span class="value">{{ post.content }}</span></p>
                             </div>
                         </div>
-
+                    </div>
+                    <div v-else class="no-posts-placeholder">
+                        <p>No replies have been posted for this topic yet.</p>
                     </div>
                 </div>
 
@@ -361,6 +372,12 @@
             </div>
 
             <div class="right-wrapper">
+                <div class="right-container">
+                    <div class="heading-wrapper">
+                        <p>Forum Navigation</p>
+                    </div>
+                    <input type="text" placeholder="Search the forums..." class="search-bar">
+                </div>
                 <div class="right-container">
                     <div class="heading-wrapper">
                         <p>Community</p>
