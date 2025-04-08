@@ -50,7 +50,7 @@
                     <div class="category-results">
                         <div v-for="item in homeCategories.discovery" :key="item._id" class="media-item"
                             @click.prevent="viewMediaInfo(item._id)">
-                            <img :src="item.main_picture" alt="Poster" class="media-poster">
+                            <img :src="item.main_picture || '#'" alt="Poster" class="media-poster">
                             <div class="media-item-info">
                                 <p class="media-title">
                                     {{ item.title && item.title.length > 25 ? item.title.substring(0, 25) + '...' :
@@ -83,7 +83,7 @@
                                     item.title }}
                                 </p>
                                 <p class="media-snippet">
-                                    {{ item.synopsis ? item.synopsis.substring(0, 25) : '' }}...
+                                    {{ item.synopsis ? item.synopsis.substring(0, 50) : '' }}...
                                 </p>
                             </div>
                         </div>
@@ -109,7 +109,7 @@
                                     item.title }}
                                 </p>
                                 <p class="media-snippet">
-                                    {{ item.synopsis ? item.synopsis.substring(0, 25) : '' }}...
+                                    {{ item.synopsis ? item.synopsis.substring(0, 50) : '' }}...
                                 </p>
                             </div>
                         </div>
@@ -135,7 +135,7 @@
                                     item.title }}
                                 </p>
                                 <p class="media-snippet">
-                                    {{ item.synopsis ? item.synopsis.substring(0, 25) : '' }}...
+                                    {{ item.synopsis ? item.synopsis.substring(0, 50) : '' }}...
                                 </p>
                             </div>
                         </div>
@@ -161,7 +161,7 @@
                                     item.title }}
                                 </p>
                                 <p class="media-snippet">
-                                    {{ item.synopsis ? item.synopsis.substring(0, 25) : '' }}...
+                                    {{ item.synopsis ? item.synopsis.substring(0, 50) : '' }}...
                                 </p>
                             </div>
                         </div>
@@ -209,6 +209,28 @@
                         </div>
                     </div>
                     <button v-if="showViewMore" @click="loadMoreResults" class="view-more-button">View More</button>
+                </div>
+
+                <!-- Discovery -->
+                <div class="left-container">
+                    <div class="heading-wrapper">
+                        <p>Discovery</p>
+                    </div>
+                    <div class="category-results">
+                        <div v-for="item in homeCategories.discovery" :key="item._id" class="media-item"
+                            @click.prevent="viewMediaInfo(item._id)">
+                            <img :src="item.main_picture || '#'" alt="Poster" class="media-poster">
+                            <div class="media-item-info">
+                                <p class="media-title">
+                                    {{ item.title && item.title.length > 25 ? item.title.substring(0, 25) + '...' :
+                                    item.title }}
+                                </p>
+                                <p class="media-snippet">
+                                    {{ item.synopsis ? item.synopsis.substring(0, 50) : '' }}...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="right-wrapper">
