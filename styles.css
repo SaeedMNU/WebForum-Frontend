@@ -736,12 +736,12 @@ body {
     font-style: italic;
 }
 
-.create-forum-area {
+.forum-page .create-forum-area {
     margin-top: 15px;
     text-align: center;
 }
 
-.create-forum-button {
+.forum-page .create-forum-button {
     background: transparent;
     border: 2px solid red;
     padding: 10px 15px;
@@ -753,12 +753,12 @@ body {
     outline: none;
 }
 
-.create-forum-button:hover {
+.forum-page .create-forum-button:hover {
     background-color: red;
     color: white;
 }
 
-.forum-create-form {
+.forum-page .forum-create-form {
     margin-top: 10px;
     padding: 15px;
     background: rgba(255, 255, 255, 0.1);
@@ -803,14 +803,14 @@ body {
     color: white;
 }
 
-.forum-list {
+.forum-page .forum-list {
     display: flex;
     flex-direction: column;
     gap: 5px;
     margin-top: 10px;
 }
 
-.forum-box {
+.forum-page .forum-box {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -823,20 +823,20 @@ body {
     font-size: 0.9em;
 }
 
-.forum-info {
+.forum-page .forum-info {
     width: 80%;
     padding-right: 5px;
     box-sizing: border-box;
 }
 
-.forum-name {
+.forum-page .forum-name {
     font-weight: bold;
     color: red;
     margin: 0;
     font-size: 1em;
 }
 
-.forum-description {
+.forum-page .forum-description {
     color: white;
     margin: 0;
     font-size: 0.9em;
@@ -845,7 +845,7 @@ body {
     white-space: nowrap;
 }
 
-.forum-meta {
+.forum-page .forum-meta {
     width: 20%;
     display: flex;
     flex-direction: column;
@@ -855,13 +855,13 @@ body {
     box-sizing: border-box;
 }
 
-.forum-meta p {
+.forum-page .forum-meta p {
     margin: 0;
     font-size: 0.8em;
     line-height: 1.1;
 }
 
-.forum-page .label {
+.forum-page .forum-page .label {
     color: rgba(255, 255, 255, 0.6);
     font-weight: normal;
 }
@@ -1018,7 +1018,7 @@ body {
     box-sizing: border-box;
 }
 
-.create-topic-button {
+.forum-topics-page .create-topic-button {
     background: transparent;
     border: 2px solid red;
     padding: 10px 15px;
@@ -1030,12 +1030,12 @@ body {
     outline: none;
 }
 
-.create-topic-button:hover {
+.forum-topics-page .create-topic-button:hover {
     background-color: red;
     color: white;
 }
 
-.topic-create-form {
+.forum-topics-page .topic-create-form {
     margin-top: 10px;
     padding: 15px;
     background: rgba(255, 255, 255, 0.1);
@@ -1413,7 +1413,7 @@ body {
     color: white;
 }
 
-.error-feedback {
+.authentication-page .error-feedback {
     color: #ff4d4f;
     background: rgba(255, 0, 0, 0.1);
     padding: 10px;
