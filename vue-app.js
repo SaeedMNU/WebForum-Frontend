@@ -91,6 +91,7 @@ let mediaForum = new Vue({
         mediaEntry: null,
         userScore: "",
         userFavourited: false,
+        userMediaList: [],
         // Forum properties:
         forumCategories: ["General", "Media", "Industry"],
         loadedForums: [],
@@ -252,6 +253,7 @@ let mediaForum = new Vue({
                     // Load the full profile details
                     await this.getUserProfile();
 
+                    this.fetchUserMediaList();
                     this.showPage("home");
                     this.loginEmail = '';
                     this.loginPassword = '';
@@ -528,6 +530,15 @@ let mediaForum = new Vue({
                 }
             } catch (error) {
                 console.error("Error fetching home media:", error);
+            }
+        },
+        async fetchUserMediaList() {
+            try {
+                const response = await fetch(`http://localhost:5000/api/mediaList/user-list?uid=${this.user.uid}`);
+                const data = await response.json();
+                this.userMediaList = data.mediaList;
+            } catch (error) {
+                console.error("Error loading user media list:", error);
             }
         },
 
@@ -865,6 +876,7 @@ let mediaForum = new Vue({
             this.user.uid = storedUid;
             this.isAuthenticated = true;
             this.getUserProfile();
+            this.fetchUserMediaList();
         }
 
         this.fetchHomeMedia();

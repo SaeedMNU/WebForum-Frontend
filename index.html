@@ -620,7 +620,6 @@
                 <!-- Profile Bio/Other Section -->
                 <div class="profile-bio">
                     <div v-if="editMode">
-                        <!-- In edit mode, show a textarea -->
                         <textarea v-model="editedBio" class="profile-bio-input"
                             placeholder="Enter your bio..."></textarea>
                     </div>
@@ -636,6 +635,30 @@
                     {{ editMode ? "Save Changes" : "Edit Profile" }}
                 </button>
             </div>
+
+            <!-- Media List Section -->
+            <div class="profile-container media-list-container" v-if="isAuthenticated && userMediaList.length">
+                <h2 class="media-list-heading">{{ user.username }}'s Media List</h2>
+
+                <div class="media-entry" v-for="media in userMediaList" :key="media.media_id">
+                    <img :src="media.main_picture" alt="Cover" class="media-poster" />
+
+                    <div class="media-info">
+                        <h3 class="media-title">{{ media.title }}</h3>
+                    </div>
+
+                    <div class="media-meta">
+                        <p><strong>Score:</strong> {{ media.score ?? 'N/A' }}</p>
+                        <p><strong>Favourited:</strong> {{ media.favourited ? 'Yes' : 'No' }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-container media-list-container" v-if="isAuthenticated && userMediaList.length === 0">
+                <h2 class="media-list-heading">{{ user.username }}'s Media List</h2>
+                <p class="no-media-text">{{ user.username }} currently has no media entries!</p>
+            </div>
+
+
         </div>
 
     </div>
