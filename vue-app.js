@@ -669,7 +669,7 @@ let mediaForum = new Vue({
         },
         // Create a new forum by sending form data to the backend
         async createForum() {
-            if (!this.newForum.name.trim() || !this.newForum.description.trim()) {
+            if (!this.newForum.name.trim() || !this.newForum.description.trim() || !this.newForum.category.trim()) {
                 alert("Please fill in all required fields.");
                 return;
             }
@@ -734,10 +734,7 @@ let mediaForum = new Vue({
                 });
                 if (response.ok) {
                     const data = await response.json();
-                    this.topics.push({
-                        ...data.topic,
-                        author_displayName: this.user.username
-                    });
+                    this.fetchTopics();
                     this.toggleCreateTopicForm();
                     this.fetchForums();
                     this.newTopic.title = "";
